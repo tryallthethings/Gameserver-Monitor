@@ -111,9 +111,4 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>del gsmon.exe
-..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll
-	</PostBuildEvent>
-  </PropertyGroup>
 </Project>
