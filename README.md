@@ -34,6 +34,36 @@ Options:
 
 ## Examples
 
+### Check a single server status and output it immediately
+> gsmon.exe --server example.com --port 27015 --type Quake3
+```
+Server: example.com (My great CoD4 server) is online: Scan time 22ms and 0/20 players are connected. Map: mp_strike
+```
+### Check multiple servers and output immediately
+> gsmon.exe --server example.com --port 27015 --type Quake3 --server example2.com --port 27016 --type Quake3
+```
+Server: example.com (My great CoD4 server) is online: Scan time 22ms and 0/20 players are connected. Map: mp_strike
+Server: example.com (My even greater CoD4 server) is online: Scan time 22ms and 0/12 players are connected. Map: mp_crash
+```
+### Checking multiple servers continously (default refresh is every 10 seconds)
+> gsmon.exe --server example.com --port 27015 --type Quake3 --server example2.com --port 27016 --type Quake3 --output autorefresh
+```
+Automatic refresh is enabled. Press CTRL+C to cancel
+Checking 1 server(s) every 10 seconds...
+Last update: 07.01.2018 04:05:02
+
+Server: example.com (My great CoD4 server) is online: Scan time 22ms and 0/20 players are connected. Map: mp_strike
+Server: example.com (My even greater CoD4 server) is online: Scan time 22ms and 0/12 players are connected. Map: mp_crash
+```
+The option **-w** can be used to increase or decrease the refresh time (in seconds).
+### Checking a single server and return the result as an PRTG compatible XML
+> gsmon.exe --server example.com --port 27015 --type Quake3 --output xml
+```
+<prtg><result><channel>Server scan time</channel><value>30</value><unit>TimeResponse</unit></result><result><channel>Players connected</channel><value>0</value><unit>Count</unit><LimitMaxWarning>19</LimitMaxWarning></result></prtg>
+```
+
+
+
 ## Supported game server types
 - **Samp**
   - SAMP
