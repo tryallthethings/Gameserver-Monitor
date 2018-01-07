@@ -112,6 +112,13 @@ namespace PRTG_gsMon
                 return;
             }
 
+            // Show help if help parameter is set
+            if (shouldShowHelp)
+            {
+                ShowHelp(options);
+                return;
+            }
+
             // Validate command line arguments
             // check if amount of given arguments is divisible by 3 without remainder (ensures equal amount of arguments are given per server)
             int equalAmount = servers.Count + types.Count + ports.Count;
@@ -140,9 +147,8 @@ namespace PRTG_gsMon
                 // fix upper / lowercase issues first
                 foreach (var type in types)
                 {
-                   string typeCorrected = type.First().ToString().ToUpper() + type.Substring(1);
-                   var matchingvalues = validGameTypes.Where(stringToCheck => stringToCheck.Contains(typeCorrected));
-                   if (matchingvalues.Count() == 0)
+                   string result = FindValidGameType(type, validGameTypes);
+                   if (result == "")
                    {
                         DisplayParameterError("Error: " + type + " is not a valid game type!", options);
                     }
@@ -155,12 +161,6 @@ namespace PRTG_gsMon
                 DisplayParameterError("Error: Not enough arguments given. Required are a set per server (hostname / IP, port and type)", options);
             }
 
-            // Show help if help parameter is set
-            if (shouldShowHelp)
-            {
-                ShowHelp(options);
-                return;
-            }
 
             // Enable continuous check
             if (outputFormat.Equals("autorefresh"))
@@ -183,7 +183,7 @@ namespace PRTG_gsMon
 
                     if (CheckReachable(servers.ElementAt(servercounter).ToString()))
                     {
-                        status = checkServer(servers.ElementAt(servercounter).ToString(), types.ElementAt(servercounter).ToString(), ports.ElementAt(servercounter));
+                        status = checkServer(servers.ElementAt(servercounter).ToString(), FindValidGameType(types.ElementAt(servercounter).ToString(), validGameTypes), ports.ElementAt(servercounter));
                     }
                     else
                     {
@@ -273,6 +273,28 @@ namespace PRTG_gsMon
             validGameTypes.Add("Samp");
             validGameTypes.Add("Doom3");
             return validGameTypes;
+        }
+
+        public static string FindValidGameType(string gameTypeArg, List<string>validGameTypes)
+        {
+            bool found = false;
+            string returnValue = "";
+            foreach (var gameType in validGameTypes)
+            {
+                if (gameType.Equals(gameTypeArg, StringComparison.OrdinalIgnoreCase))
+                {
+                    found = true;
+                    returnValue = gameType;
+                }
+            }
+            if (found)
+            {
+                return returnValue;
+            }
+            else
+            {
+                return returnValue = "";
+            }
         }
 
         static void ShowHelp(OptionSet options)
