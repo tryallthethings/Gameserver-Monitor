@@ -103,17 +103,17 @@
     <Error Condition="!Exists('..\packages\ILRepack.2.0.15\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.2.0.15\build\ILRepack.props'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if $(Configuration) == Debug (
- echo "Post build event for Debug"
- del gsmon.exe
- ..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll
-) else if $(Configuration) == Release (
- echo "Post build event for Release"
-) ELSE (
-    echo "Not executing post build event"
-)</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">del gsmon.exe
+	  ..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll
+	  </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>	</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>del gsmon.exe
+..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>
