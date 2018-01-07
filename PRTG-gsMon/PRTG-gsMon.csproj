@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\ILRepack.2.0.15\build\ILRepack.props" Condition="Exists('..\packages\ILRepack.2.0.15\build\ILRepack.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,6 +12,8 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,11 +48,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="lib\gameserverinfo\GameServer.cs" />
+    <Compile Include="lib\gameserverinfo\GameType.cs" />
+    <Compile Include="lib\gameserverinfo\Player.cs" />
+    <Compile Include="lib\gameserverinfo\PlayerCollection.cs" />
+    <Compile Include="lib\gameserverinfo\Protocol.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\Ase.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\Doom3.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\GameSpy.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\GameSpy2.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\HalfLife.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\Quake3.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\Samp.cs" />
+    <Compile Include="lib\gameserverinfo\Protocols\Source.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILRepack.2.0.15\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.2.0.15\build\ILRepack.props'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>del gsmon.exe
+..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>
