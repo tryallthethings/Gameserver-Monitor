@@ -103,7 +103,7 @@
     <Error Condition="!Exists('..\packages\ILRepack.2.0.15\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.2.0.15\build\ILRepack.props'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug del gsmon.exe
+if $(ConfigurationName) == Debug ..\..\..\packages\ILRepack.2.0.15\tools\ILRepack.exe /out:gsmon.exe PRTG-gsMon.exe Mono.Options.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>
