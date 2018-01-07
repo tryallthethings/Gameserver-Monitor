@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -12,6 +13,7 @@ namespace PRTG_gsMon
     class Program
     {
         static int verbosity = 0;
+        static string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         static void Main(string[] args)
         {
             /* Command line options to do
@@ -278,6 +280,7 @@ namespace PRTG_gsMon
             // show some app description message
             Console.WriteLine("Usage: gsmon.exe [OPTIONS]");
             Console.WriteLine("Example: gsmon.exe -s servername.com -p 12345 -t Quake3");
+            Console.WriteLine("Version " + version + " - Visit https://github.com/roots84/Gameserver-Monitor for support");
             Console.WriteLine();
 
             // output the options
