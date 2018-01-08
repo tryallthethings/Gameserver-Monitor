@@ -17,29 +17,11 @@ namespace PRTG_gsMon
         static void Main(string[] args)
         {
             /* Command line options to do
-             * resolve FQDN to IP?
-             * discover gameservers on given hostname / IP?
-             *
-             * Server name colors
-             * The color codes are:
-                    ^1 = red
-                    ^2 = green
-                    ^3 = yellow
-                    ^4 = blue
-                    ^5 = light blue
-                    ^6 = purple
-                    ^7 = white
-                    ^8 is a color that changes depending what level you are on.
-                    American maps = Dark Green
-                    Russian maps = Dark red/marroon
-                    British maps = Dark Blue
-                    ^9 = grey
-                    ^0 = black
-
-            * Autodetect game type on given port?
-            * Give game type name Cod4 instead of gametype (quake3 e.g.)
-            * load servers from json or txt?
-            * linux compatibility?
+              * discover gameservers on given hostname / IP?
+              * Autodetect game type on given port?
+              * Give game type name Cod4 instead of gametype (quake3 e.g.)
+              * load servers from json or txt?
+              * linux compatibility?
             */
 
             Console.CancelKeyPress += delegate {
@@ -55,7 +37,6 @@ namespace PRTG_gsMon
             // console = default, autorefresh, xml (prtg)
             string outputFormat = "console";
             bool autorefresh = false;
-            bool resolveFQDN = false;
             int waitTime = 10;
             List<string> validGameTypes = GenerateValidGameTypes();
 
@@ -65,7 +46,6 @@ namespace PRTG_gsMon
                 { "t|type=",   "the server type (protocol).",           t => types.Add (t.ToLower()) },
                 { "p|port=", "the server port.", (int p) => ports.Add (p) },
                 { "o|output=", "output formatting.", o => outputFormat = o },
-                { "r|resolve=", "resolve FQDN to IP-address before query", r => resolveFQDN = r != null },
                 { "w|wait=", "wait time between checks - only for autorefresh.", (int w) => waitTime = w },
 
                 { "v", "increase debug message verbosity", v => {
@@ -194,16 +174,14 @@ namespace PRTG_gsMon
                     if (status.serverOnline)
                     {
                         // Remove color codes for better readability. maybe add colors to console later on
-                        status.serverName = Regex.Replace(status.serverName, @"\^[0-9]{1}", "");
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        //status.serverName = Regex.Replace(status.serverName, @"\^[0-9]{1}", "");
                         switch (outputFormat)
                         {
                             case "console":
-                                Console.WriteLine("Server: " + servers.ElementAt(servercounter).ToString() + " (" + status.serverName + ") is online: " + "Scan time " + status.scanTime + "ms and " + status.playersConnected + "/" + status.maxPlayers + " players are connected. Map: " + status.serverMap);
-
+                                printColored("Server: " + servers.ElementAt(servercounter).ToString() + " (" + status.serverName + ") is online: " + "Scan time " + status.scanTime + "ms and " + status.playersConnected + "/" + status.maxPlayers + " players are connected. Map: " + status.serverMap, ConsoleColor.DarkGreen);
                                 break;
                             case "autorefresh":
-                                Console.WriteLine("Server: " + servers.ElementAt(servercounter).ToString() + " (" + status.serverName + ") is online: " + "Scan time " + status.scanTime + "ms and " + status.playersConnected + "/" + status.maxPlayers + " players are connected. Map: " + status.serverMap);
+                                printColored("Server: " + servers.ElementAt(servercounter).ToString() + " (" + status.serverName + ") is online: " + "Scan time " + status.scanTime + "ms and " + status.playersConnected + "/" + status.maxPlayers + " players are connected. Map: " + status.serverMap, ConsoleColor.DarkGreen);
                                 break;
                             case "xml":
                                 output += "<prtg>" +
@@ -326,6 +304,85 @@ namespace PRTG_gsMon
             Console.ResetColor();
             ShowHelp(options);
             Environment.Exit(1);
+        }
+
+        public static void printColored (string message, ConsoleColor color = ConsoleColor.Gray)
+        {
+            Console.ForegroundColor = color;
+            List<int> toColor = new List<int>();
+            Regex hasColorcode = new Regex(@"\^[0-9]{1}");
+
+            if (hasColorcode.IsMatch(message))
+            {
+                foreach (Match match in hasColorcode.Matches(message))
+                {
+                    toColor.Add(match.Index);
+                }
+
+                for (int i=0; i<message.Length; i++)
+                {
+                    if (toColor.Count == 0)
+                    {
+                        if (((i+11) < message.Length) && message.Substring(i, 11).Equals(@") is online"))
+                        {
+                            Console.ForegroundColor = color;
+                        }
+                        Console.Write(message[i]);
+                    }
+                    else if (toColor.ElementAt(0) > i)
+                    {
+                        Console.Write(message[i]);
+                    }
+                    else
+                    {
+                        char codeChar = message[i+1];
+                        char currentLetter = message[i];
+                        char nextLetter = message[i + 1];
+                        int codeNumber = (int)Char.GetNumericValue(codeChar);
+                        Console.ForegroundColor = getColorbyCode(codeNumber);
+                        Console.Write(message[i+2]);
+                        if (toColor.Count() > 0)
+                        {
+                            toColor.RemoveAt(0);
+                        }
+                        i=i+2;
+                    }
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine(message);
+                Console.ResetColor();
+            }
+        }
+
+        public static ConsoleColor getColorbyCode(int colorCode)
+        {
+            switch (colorCode)
+            {
+                case 0:
+                    return ConsoleColor.Red;
+                case 1:
+                    return ConsoleColor.Green;
+                case 2:
+                    return ConsoleColor.Yellow;
+                case 3:
+                    return ConsoleColor.Blue;
+                case 4:
+                    return ConsoleColor.Cyan;
+                case 5:
+                    return ConsoleColor.DarkMagenta;
+                case 6:
+                    return ConsoleColor.White;
+                case 7:
+                    return ConsoleColor.DarkGreen;
+                case 8:
+                    return ConsoleColor.DarkGray;
+                case 9:
+                    return ConsoleColor.Black;
+            }
+            return ConsoleColor.Gray;
         }
 
         public static serverStatus checkServer(string serveraddress, string gametype, int serverport)
