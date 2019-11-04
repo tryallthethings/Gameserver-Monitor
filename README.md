@@ -1,11 +1,11 @@
-# Gameserver-Monitor [![Build Status](https://travis-ci.org/roots84/Gameserver-Monitor.svg?branch=master)](https://travis-ci.org/roots84/Gameserver-Monitor)
+# Gameserver-Monitor [![Build Status](https://travis-ci.org/tryallthethings/Gameserver-Monitor.svg?branch=master)](https://travis-ci.org/tryallthethings/Gameserver-Monitor)
 A simple command line application to check the status of one or multiple game servers. Supports single run, continous check and [PRTG XML export](https://www.paessler.com/prtg)
-As it uses the [Gameserverinfo](https://github.com/roots84/gameserverinfo) library to check the various game servers only those are currently supported by this application.
+As it uses the [Gameserverinfo](https://github.com/tryallthethings/gameserverinfo) library to check the various game servers only those are currently supported by this application.
 
 ## Requirements
 - Requires at least Microsoft .NET Framework 4.0 to run
 ## Installation
-- Download latest version from [Releases](https://github.com/roots84/Gameserver-Monitor/releases)
+- Download latest version from [Releases](https://github.com/tryallthethings/Gameserver-Monitor/releases)
 - Extract gsmon.exe from the .zip to any folder you'd like to run it from
 - Profit :smiley:
 ## How to use
@@ -20,7 +20,7 @@ These are all the supported paramters:
 ```
 Usage: gsmon.exe [OPTIONS]
 Example: gsmon.exe -s servername.com -p 12345 -t Quake3
-Version 1.0.0.0 - Visit https://github.com/roots84/Gameserver-Monitor for support
+Version 1.0.0.0 - Visit https://github.com/tryallthethings/Gameserver-Monitor for support
 
 Options:
   -s, --server=VALUE         the server name (FQDN) or IP address.
